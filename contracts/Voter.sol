@@ -14,7 +14,6 @@ contract Voter is Ownable {
     uint public vote_b;
     uint public vote_c;
     uint public finishTime;
-    uint dayTime = 1 days;
     uint dayFee = 0.01 ether;
 
     event StartVote(address indexed startVoteFrom, string question, string choice_a, string choice_b, string choice_c, uint finishTime);
@@ -45,7 +44,7 @@ contract Voter is Ownable {
         choice_a = _choice_a;
         choice_b = _choice_b;
         choice_c = _choice_c;
-        finishTime = block.timestamp + _days * dayTime;
+        finishTime = block.timestamp + _days * 1 days;
         voteFrom = msg.sender;
         emit StartVote(msg.sender, question, choice_a, choice_b, choice_c, finishTime);
     }

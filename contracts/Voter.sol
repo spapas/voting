@@ -46,6 +46,9 @@ contract Voter is Ownable {
         choice_c = _choice_c;
         finishTime = block.timestamp + _days * 1 days;
         voteFrom = msg.sender;
+        vote_a = 0;
+        vote_b = 0;
+        vote_c = 0;
         emit StartVote(msg.sender, question, choice_a, choice_b, choice_c, finishTime);
     }
 

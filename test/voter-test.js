@@ -16,7 +16,7 @@ describe("Voter", function () {
   it("Should return a non usable vote when constructed", async function () {
     
     const finishTime = await voter.finishTime();
-    const latestBlock = await hre.ethers.provider.getBlock("latest")
+    const latestBlock = await ethers.provider.getBlock("latest")
     expect(finishTime).to.equal(latestBlock.timestamp);
 
   });
@@ -42,7 +42,7 @@ describe("Voter", function () {
     await voter.startVote("q", "a1", "a2", "a3", 5, {
       value: ethers.utils.parseEther("0.05")
     });
-    const latestBlock = await hre.ethers.provider.getBlock("latest")
+    const latestBlock = await ethers.provider.getBlock("latest")
     const [a,b,c] = await voter.getResult();
     expect(a).to.equal(0);
     expect(b).to.equal(0);
@@ -56,7 +56,7 @@ describe("Voter", function () {
   });
 
   it("Should emit event with correct data data", async function () {
-    const latestBlock = await hre.ethers.provider.getBlock("latest")
+    //const latestBlock = await hre.ethers.provider.getBlock("latest")
     await expect(voter.startVote("q", "a1", "a2", "a3", 5, {
       value: ethers.utils.parseEther("0.05")
     })).to.emit(voter, 'StartVote');//.withArgs(owner.address, "q", "a1", "a2", "a3", latestBlock.timestamp+86400*5);

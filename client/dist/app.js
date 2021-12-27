@@ -26840,6 +26840,10 @@
   var import_jquery = __toESM(require_jquery());
   var provider = void 0;
   var currentAccount = null;
+  function disable(el) {
+    el.prop("disabled", true);
+    el.addClass("opacity-50").addClass("cursor-not-allowed");
+  }
   function connect() {
     ethereum.request({ method: "eth_requestAccounts" }).then(handleAccountsChanged).catch((err) => {
       if (err.code === 4001) {
@@ -26854,28 +26858,34 @@
       alert("Please connect to MetaMask.");
     } else if (accounts[0] !== currentAccount) {
       currentAccount = accounts[0];
-      alert("Connected, " + currentAccount);
+      provider.getBalance(currentAccount).then((balance) => {
+        console.log(balance);
+        (0, import_jquery.default)("#balance").text(ethers_exports.utils.formatEther(balance) + " ETH");
+      });
+      (0, import_jquery.default)("#account").text(currentAccount);
+      disable((0, import_jquery.default)("#enableEthereumButton"));
     }
   }
   (0, import_jquery.default)(function() {
     if (typeof web3 !== "undefined") {
       provider = new ethers_exports.providers.Web3Provider(window.ethereum);
-      console.log(provider);
-      console.log(ethereum.networkVersion);
-      console.log(ethereum.selectedAddress);
+      if (ethereum.networkVersion == 1) {
+        (0, import_jquery.default)("#networkVersion").text(ethereum.networkVersion + " (Warning: Mainnet!!!)");
+        (0, import_jquery.default)("#networkVersion").addClass("font-black").addClass("text-red-500");
+      }
       ethereum.request({ method: "eth_accounts" }).then(handleAccountsChanged).catch((err) => {
         console.error(err);
       });
       ethereum.on("accountsChanged", handleAccountsChanged);
-      (0, import_jquery.default)(".enableEthereumButton").on("click", () => {
-        (0, import_jquery.default)(".enableEthereumButton").attr("disabled", true);
+      (0, import_jquery.default)("#enableEthereumButton").on("click", () => {
+        disable((0, import_jquery.default)("#enableEthereumButton"));
         connect();
       });
     } else {
       alert("Metamask not found!");
+      disable((0, import_jquery.default)("#enableEthereumButton"));
     }
   });
-  console.log(import_jquery.default);
 })();
 /*!
  * jQuery JavaScript Library v3.6.0

@@ -4,6 +4,11 @@ import $ from "jquery";
 let provider = undefined;
 let currentAccount = null;
 
+function disable(el) {
+    el.prop("disabled", true);
+    el.addClass("opacity-50").addClass("cursor-not-allowed");
+}
+
 function connect() {
     ethereum
       .request({ method: 'eth_requestAccounts' })
@@ -19,46 +24,48 @@ function connect() {
       });
 }
 
-
 function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
-        // MetaMask is locked or the user has not connected any accounts
         alert('Please connect to MetaMask.');
     } else if (accounts[0] !== currentAccount) {
+        
         currentAccount = accounts[0];
-        alert("Connected, " + currentAccount)
+        provider.getBalance(currentAccount).then(balance => {
+            console.log(balance)
+            $('#balance').text(ethers.utils.formatEther(balance) + " ETH");
+        });
+        
+        $('#account').text(currentAccount);
+        disable($('#enableEthereumButton'));
     }
 }
 
 $(function() { 
     if (typeof web3 !== 'undefined') {
         provider = new ethers.providers.Web3Provider(window.ethereum)
-        console.log(provider)  
-        console.log(ethereum.networkVersion)  
-        console.log(ethereum.selectedAddress)  
         
-        ethereum
-        .request({ method: 'eth_accounts' })
+        if(ethereum.networkVersion == 1) {
+            $('#networkVersion').text(ethereum.networkVersion + " (Warning: Mainnet!!!)");
+            $('#networkVersion').addClass("font-black").addClass("text-red-500")
+        }
+        
+        ethereum.request({ method: 'eth_accounts' })
         .then(handleAccountsChanged)
         .catch((err) => {
-            
             console.error(err);
         });
 
         ethereum.on('accountsChanged', handleAccountsChanged);
 
-
-
-        $('.enableEthereumButton').on("click", () => {
-            $('.enableEthereumButton').attr("disabled", true);
+        $('#enableEthereumButton').on("click", () => {
+            disable($('#enableEthereumButton'));
             connect()
         });
       } else {
         alert("Metamask not found!");
+        disable($('#enableEthereumButton'));
       }
 
 
 })
 
-
-console.log($)

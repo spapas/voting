@@ -20,7 +20,44 @@
   
     <h3>Current account: <span class='underline' id='account'></span></h3>
     <h3>Current balance: <span class='underline' id='balance'></span></h3>
+
+    <hr />
+    <div id='newVote' class='hidden'>
+
+      <h4 class='text-2xl'>New vote</h4>
+      <div class='w-full'>
+        <label for='question'>Question</label>
+        <input value='Question?' name='question' id='question' class='border rounded border-gray-500 p-1  w-full' />
+      </div>
+      <div class='w-full'>
+        <label for='answer_a'>Answer 1</label>
+        <input value='A' name='answer_a' id='answer_a' class='border rounded border-gray-500 p-1 w-full' />
+      </div>
+      <div class='w-full'>
+        <label for='answer_b'>Answer 2</label>
+        <input value='B' name='answer_b' id='answer_b' class='border rounded border-gray-500 p-1  w-full' />
+      </div>
+      <div class='w-full'>
+        <label for='answer_c'>Answer 3</label>
+        <input value='C' name='answer_c' id='answer_c' class='border rounded border-gray-500 p-1  w-full' />
+      </div>
+      <div class='w-full'>
+        <label for='duration'>Duration in days</label>
+        <input value='5' name='duration' id='duration' class='border rounded border-gray-500 p-1  w-full' />
+      </div>
+      
+      <div class='w-full'>
+        <button id='startVoteButton'
+        class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+        >Start vote</button>
+      </div>
+    </div>
+    <div id='doVote' class='hidden'>
+      <h4 class='text-2xl'>Vote</h4>
+    </div>
   </div>
+
+
 
   <script src="dist/app.js"></script>
 </body>

@@ -1,8 +1,4 @@
 {
-  "_format": "hh-sol-dbg-1",
-  "buildInfo": "..\\..\\build-info\\1618a62252e43afe03fc28e7b4251e72.json"
-}
-{
   "_format": "hh-sol-artifact-1",
   "contractName": "Voter",
   "sourceName": "contracts/Voter.sol",
@@ -369,4 +365,3 @@
   "linkReferences": {},
   "deployedLinkReferences": {}
 }
-

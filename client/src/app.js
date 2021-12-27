@@ -72,15 +72,45 @@ $(function() {
             connect()
         });
 
-        console.log("OK")
         const abi = voterAbi.abi
-        const voterContract = new ethers.Contract(voterAddress, abi, provider);
-        console.log(voterContract);
+        const signer = provider.getSigner();
+        //const voterContract = new ethers.Contract(voterAddress, abi, provider);
+        const voterContract = new ethers.Contract(voterAddress, abi, signer);
+
+        $('#startVoteButton').on("click", () => {
+            const q = $('#question').val()
+            const a = $('#answer_a').val()
+            const b = $('#answer_b').val()
+            const c = $('#answer_c').val()
+            const d = $('#duration').val()
+            if(!q || !a || !b || !c || !d) {
+                alert("Please fill all params");
+            } else {
+                voterContract.startVote(q, a, b, c, d, {
+                    value: ethers.utils.parseEther("0.05")
+                }).then(tx => {
+                    console.log(tx);
+                }).catch(err => {
+                    console.log(err);
+                    alert(err.data.message)
+                })
+            }
+            
+        });
 
         
         voterContract.getVoteInfo().then(resp => {
+            console.log(resp)
+            let isActive = resp[0]
+            if(isActive) {
+                console.log("Vote is active")
+                $('#doVote').removeClass("hidden")
+            } else {
+                console.log("Vote is not active")
+                $('#newVote').removeClass("hidden")
+                
+            }
             
-            console.log(resp);
         }).catch((err) => {
             console.error(err);
         });

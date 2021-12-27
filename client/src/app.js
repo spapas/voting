@@ -1,6 +1,8 @@
 import { ethers } from "ethers";
 import $ from "jquery";
+import voterAbi from '../Voter.json';
 
+const voterAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 let provider = undefined;
 let currentAccount = null;
 
@@ -37,6 +39,11 @@ function handleAccountsChanged(accounts) {
         
         $('#account').text(currentAccount);
         disable($('#enableEthereumButton'));
+
+        //const signer = provider.getSigner();
+        //signer.signMessage("Some custom message").then(signature => {
+            //console.log("OK", signature);
+        //})
     }
 }
 
@@ -46,7 +53,10 @@ $(function() {
         
         if(ethereum.networkVersion == 1) {
             $('#networkVersion').text(ethereum.networkVersion + " (Warning: Mainnet!!!)");
-            $('#networkVersion').addClass("font-black").addClass("text-red-500")
+        } else {
+            $('#networkVersion').text(ethereum.networkVersion + " (Warning:  Test!!!)");
+            $('#networkVersion').addClass("font-black").addClass("text-blue-500")
+
         }
         
         ethereum.request({ method: 'eth_accounts' })
@@ -61,6 +71,20 @@ $(function() {
             disable($('#enableEthereumButton'));
             connect()
         });
+
+        console.log("OK")
+        const abi = voterAbi.abi
+        const voterContract = new ethers.Contract(voterAddress, abi, provider);
+        console.log(voterContract);
+
+        
+        voterContract.getVoteInfo().then(resp => {
+            
+            console.log(resp);
+        }).catch((err) => {
+            console.error(err);
+        });
+
       } else {
         alert("Metamask not found!");
         disable($('#enableEthereumButton'));

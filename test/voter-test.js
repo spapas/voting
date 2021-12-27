@@ -47,7 +47,8 @@ describe("Voter", function () {
     expect(a).to.equal(0);
     expect(b).to.equal(0);
     expect(c).to.equal(0);
-    const [q, a1, a2, a3, ft] = await voter.getVoteInfo();
+    const [is_active, q, a1, a2, a3, ft] = await voter.getVoteInfo();
+    expect(is_active).to.equal(true);
     expect(q).to.equal("q");
     expect(a1).to.equal("a1");
     expect(a2).to.equal("a2");

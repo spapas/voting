@@ -72,8 +72,9 @@ contract Voter is Ownable {
         return (vote_a, vote_b, vote_c);
     }
 
-    function getVoteInfo() public view returns (string memory, string memory, string memory, string memory, uint) {
-        return (question, choice_a, choice_b, choice_c, finishTime);
+    function getVoteInfo() public view returns (bool, string memory, string memory, string memory, string memory, uint) {
+        bool isActive = block.timestamp < finishTime;
+        return (isActive, question, choice_a, choice_b, choice_c, finishTime);
     }
     
 }

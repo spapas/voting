@@ -47,8 +47,9 @@ describe("Voter", function () {
     expect(a).to.equal(0);
     expect(b).to.equal(0);
     expect(c).to.equal(0);
-    const [is_active, q, a1, a2, a3, ft] = await voter.getVoteInfo();
+    const [is_active, vfrom, q, a1, a2, a3, ft] = await voter.getVoteInfo();
     expect(is_active).to.equal(true);
+    expect(vfrom).to.equal(owner.address);
     expect(q).to.equal("q");
     expect(a1).to.equal("a1");
     expect(a2).to.equal("a2");
@@ -88,23 +89,31 @@ describe("Voter", function () {
     const provider = waffle.provider;
     
     let ownerBalance = await provider.getBalance(owner.address);
+    
     let voterBalance = await provider.getBalance(voter.address);
     expect(voterBalance).to.equal(ethers.utils.parseEther("0.0"));
     await voter.startVote("q", "a1", "a2", "a3", 5, {
       value: ethers.utils.parseEther("0.05")
     });
+    
     voterBalance = await provider.getBalance(voter.address);
-    expect(voterBalance).to.equal(ethers.utils.parseEther("0.05"));
+    
     
     let ownerBalanceAfterStart = await provider.getBalance(owner.address);
     
+    
     await voter.withdraw();
     let ownerBalanceAfterWithdraw = await provider.getBalance(owner.address);
+    expect(r(ownerBalance)).to.be.greaterThan(r(ownerBalanceAfterStart));
+    expect(r(ownerBalanceAfterWithdraw)).to.be.greaterThan(r(ownerBalanceAfterStart));
+    expect(r(ownerBalance)).to.be.greaterThan(r(ownerBalanceAfterWithdraw));
+    voterBalance = await provider.getBalance(voter.address);
+    expect(r(voterBalance)).to.equal(0);
     //console.log(r(ownerBalance))
     //console.log(r(ownerBalanceAfterStart))
     //console.log(r(ownerBalanceAfterWithdraw))
-    expect(r(ownerBalance)).to.be.closeTo(r(ownerBalanceAfterStart) + 0.05, 0.0001);
-    expect(r(ownerBalance)).to.be.closeTo(r(ownerBalanceAfterWithdraw), 0.0001);
+    //expect(r(ownerBalance)).to.be.closeTo(r(ownerBalanceAfterStart) + 0.05, 0.001);
+    //expect(r(ownerBalance)).to.be.closeTo(r(ownerBalanceAfterWithdraw), 0.001);
     
 
 

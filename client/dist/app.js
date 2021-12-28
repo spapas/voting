@@ -27371,10 +27371,9 @@
       });
       voterContract.getVoteInfo().then((resp) => {
         console.log(resp);
-        let isActive = resp[0];
+        let [isActive, voteFrom, question, answer_a, answer_b, answer_c, finishTime] = resp;
         if (isActive) {
           console.log("Vote is active");
-          let [isActive2, voteFrom, question, answer_a, answer_b, answer_c, finishTime] = resp;
           (0, import_jquery.default)("#questionDiv").text(question);
           (0, import_jquery.default)("#answerAlabel").text(answer_a);
           (0, import_jquery.default)("#answerBlabel").text(answer_b);
@@ -27383,8 +27382,22 @@
           (0, import_jquery.default)("#doVote").removeClass("hidden");
           console.log(voteFrom);
         } else {
-          console.log("Vote is not active");
-          (0, import_jquery.default)("#newVote").removeClass("hidden");
+          voterContract.getResult().then((resp2) => {
+            let [a, b, c] = resp2;
+            console.log("Vote is not active");
+            (0, import_jquery.default)("#newVote").removeClass("hidden");
+            let ovr = `Question: <b>${question}</b><br />
+                    Answer A: <b>${answer_a} -> ${a}</b><br />
+                    Answer B: <b>${answer_b} -> ${b} </b><br />
+                    Answer C: <b>${answer_c} -> ${c}</b><br />
+                    Finished on: ${new Date(1e3 * finishTime)}<br />
+                    Vote from: ${voteFrom}`;
+            (0, import_jquery.default)("#oldVoteResults").html(ovr);
+            console.log(ovr);
+          }).catch((err) => {
+            console.log(err);
+            alert(err.data.message);
+          });
         }
       }).catch((err) => {
         console.log(err);

@@ -84,8 +84,19 @@ $(function() {
 
         voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
             console.log("StartVote EVENT", from, question, choice_a, choice_b, choice_c, finishTime, event);
+            console.log(event)
             alert("Start vote event received! with data: " + from + " " + question + " " + choice_a + " " + choice_b + " " + choice_c + " " + finishTime);
             //window.location = "/"
+        });
+
+        voterContract.on("Vote", (from, choice, total, event) => {
+            console.log("Vote event received! with data: " + from + " " + choice + " " + total +" " + event);
+            console.log(event)
+            voterContract.getResult().then(result => {
+                let [a, b, c] = result;
+                console.log("RES", result)
+                $('#resultsDiv').text(a.toString() + " / " + b.toString() + " / " + c.toString());
+            })
         });
 
         $('#startVoteButton').on("click", () => {
@@ -108,8 +119,23 @@ $(function() {
                     alert(err.data.message)
                 })
             }
-            
         });
+
+        $('#voteButton').on("click", () => {
+            const v = $('input[name=vote]:checked').val()
+            if(!v) {
+                alert("Please select a choice!")
+            } else {
+                voterContract.vote(v).then(tx => {
+                    console.log(tx);
+                    alert("Vote ok! " + tx + ". Please wait for confirmation...");
+                }).catch(err => {
+                    console.log(err);
+                    alert(err.data.message)
+                })
+            }
+            
+        })
 
         voterContract.getVoteInfo().then(resp => {
             console.log(resp)
@@ -121,6 +147,9 @@ $(function() {
                 $('#answerAlabel').text(answer_a);
                 $('#answerBlabel').text(answer_b);
                 $('#answerClabel').text(answer_c);
+                $('#finishOnDiv').text(new Date(1000*finishTime));
+
+                
 
                 $('#doVote').removeClass("hidden")
             } else {

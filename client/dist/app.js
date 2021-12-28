@@ -27268,7 +27268,17 @@
       const voterContract = new ethers_exports.Contract(voterAddress, abi2, signer);
       voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
         console.log("StartVote EVENT", from, question, choice_a, choice_b, choice_c, finishTime, event);
+        console.log(event);
         alert("Start vote event received! with data: " + from + " " + question + " " + choice_a + " " + choice_b + " " + choice_c + " " + finishTime);
+      });
+      voterContract.on("Vote", (from, choice, total, event) => {
+        console.log("Vote event received! with data: " + from + " " + choice + " " + total + " " + event);
+        console.log(event);
+        voterContract.getResult().then((result) => {
+          let [a, b, c] = result;
+          console.log("RES", result);
+          (0, import_jquery.default)("#resultsDiv").text(a.toString() + " / " + b.toString() + " / " + c.toString());
+        });
       });
       (0, import_jquery.default)("#startVoteButton").on("click", () => {
         const q = (0, import_jquery.default)("#question").val();
@@ -27291,6 +27301,20 @@
           });
         }
       });
+      (0, import_jquery.default)("#voteButton").on("click", () => {
+        const v = (0, import_jquery.default)("input[name=vote]:checked").val();
+        if (!v) {
+          alert("Please select a choice!");
+        } else {
+          voterContract.vote(v).then((tx) => {
+            console.log(tx);
+            alert("Vote ok! " + tx + ". Please wait for confirmation...");
+          }).catch((err) => {
+            console.log(err);
+            alert(err.data.message);
+          });
+        }
+      });
       voterContract.getVoteInfo().then((resp) => {
         console.log(resp);
         let isActive = resp[0];
@@ -27301,6 +27325,7 @@
           (0, import_jquery.default)("#answerAlabel").text(answer_a);
           (0, import_jquery.default)("#answerBlabel").text(answer_b);
           (0, import_jquery.default)("#answerClabel").text(answer_c);
+          (0, import_jquery.default)("#finishOnDiv").text(new Date(1e3 * finishTime));
           (0, import_jquery.default)("#doVote").removeClass("hidden");
         } else {
           console.log("Vote is not active");

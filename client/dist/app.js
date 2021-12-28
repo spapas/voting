@@ -27302,22 +27302,27 @@
       const abi2 = Voter_default.abi;
       const signer = provider.getSigner();
       const voterContract = new ethers_exports.Contract(voterAddress, abi2, signer);
-      voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
-        console.log("StartVote EVENT", from, question, choice_a, choice_b, choice_c, finishTime, event);
-        console.log(event);
-      });
-      voterContract.on("Vote", (from, choice, total, event) => {
-        console.log("Vote event received! with data: " + from + " " + choice + " " + total + " " + event);
-        console.log(event);
-        voterContract.getResult().then((result) => {
-          let [a, b, c] = result;
-          console.log("RES", result);
-          (0, import_jquery.default)("#resultsDiv").text(a.toString() + " / " + b.toString() + " / " + c.toString());
+      provider.once("block", () => {
+        voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
+          console.log("StartVote EVENT", from, question, choice_a, choice_b, choice_c, finishTime, event);
+          console.log(event);
+          (0, import_jquery.default)("#events").append(`<li>StartVote event</li>`);
         });
-      });
-      voterContract.on("FinishVote", (from, event) => {
-        console.log("FinishVote event received! with data: " + from + "  " + event);
-        console.log(event);
+        voterContract.on("Vote", (from, choice, total, event) => {
+          console.log("Vote event received! with data: " + from + " " + choice + " " + total + " " + event);
+          console.log(event);
+          (0, import_jquery.default)("#events").append(`<li>Vote event</li>`);
+          voterContract.getResult().then((result) => {
+            let [a, b, c] = result;
+            console.log("RES", result);
+            (0, import_jquery.default)("#resultsDiv").text(a.toString() + " / " + b.toString() + " / " + c.toString());
+          });
+        });
+        voterContract.on("FinishVote", (from, event) => {
+          console.log("FinishVote event received! with data: " + from + "  " + event);
+          console.log(event);
+          (0, import_jquery.default)("#events").append(`<li>FinishVote event</li>`);
+        });
       });
       (0, import_jquery.default)("#startVoteButton").on("click", () => {
         const q = (0, import_jquery.default)("#question").val();

@@ -18,6 +18,7 @@ contract Voter is Ownable {
 
     event StartVote(address indexed startVoteFrom, string question, string choice_a, string choice_b, string choice_c, uint finishTime);
     event Vote(address indexed voteFrom, uint indexed choice, uint total);
+    event FinishVote(address indexed from);
 
     constructor() {
         finishTime = block.timestamp;
@@ -71,6 +72,7 @@ contract Voter is Ownable {
     function finish() public voteNotFinished {
         require(msg.sender == voteFrom || msg.sender == owner(), "Only the owner can finish the vote!");
         finishTime = block.timestamp;
+        emit FinishVote(msg.sender);
     }
 
     function getResult() public view returns (uint, uint, uint) {

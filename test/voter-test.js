@@ -124,7 +124,7 @@ describe("Voter", function () {
     });
     let [is_active, vfrom, q, a1, a2, a3, ft] = await voter.getVoteInfo();
     expect(is_active).to.equal(true);
-    await voter.finish();
+    await expect(voter.finish()).to.emit(voter, 'FinishVote').withArgs(owner.address);
     [is_active, vfrom, q, a1, a2, a3, ft] = await voter.getVoteInfo();
     expect(is_active).to.equal(false);
   })

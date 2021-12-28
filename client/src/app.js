@@ -99,6 +99,13 @@ $(function() {
             })
         });
 
+        
+        voterContract.on("FinishVote", (from, event) => {
+            console.log("FinishVote event received! with data: " + from +"  " + event);
+            console.log(event)
+            
+        });
+
         $('#startVoteButton').on("click", () => {
             const q = $('#question').val()
             const a = $('#answer_a').val()
@@ -110,7 +117,7 @@ $(function() {
                 alert("Please fill all params");
             } else {
                 voterContract.startVote(q, a, b, c, d, {
-                    value: ethers.utils.parseEther("0.05")
+                    value: ethers.utils.parseEther( (d * 0.01).toString() )
                 }).then(tx => {
                     console.log(tx);
                     console.log(tx.hash);

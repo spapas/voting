@@ -27309,6 +27309,10 @@
           (0, import_jquery.default)("#resultsDiv").text(a.toString() + " / " + b.toString() + " / " + c.toString());
         });
       });
+      voterContract.on("FinishVote", (from, event) => {
+        console.log("FinishVote event received! with data: " + from + "  " + event);
+        console.log(event);
+      });
       (0, import_jquery.default)("#startVoteButton").on("click", () => {
         const q = (0, import_jquery.default)("#question").val();
         const a = (0, import_jquery.default)("#answer_a").val();
@@ -27320,7 +27324,7 @@
           alert("Please fill all params");
         } else {
           voterContract.startVote(q, a, b, c, d, {
-            value: ethers_exports.utils.parseEther("0.05")
+            value: ethers_exports.utils.parseEther((d * 0.01).toString())
           }).then((tx) => {
             console.log(tx);
             console.log(tx.hash);

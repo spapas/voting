@@ -68,6 +68,11 @@ contract Voter is Ownable {
         emit Vote(msg.sender, _choice, tot);
     }
 
+    function finish() public voteNotFinished {
+        require(msg.sender == voteFrom || msg.sender == owner(), "Only the owner can finish the vote!");
+        finishTime = block.timestamp;
+    }
+
     function getResult() public view returns (uint, uint, uint) {
         return (vote_a, vote_b, vote_c);
     }

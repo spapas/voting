@@ -98,9 +98,7 @@ describe("Voter", function () {
     
     voterBalance = await provider.getBalance(voter.address);
     
-    
     let ownerBalanceAfterStart = await provider.getBalance(owner.address);
-    
     
     await voter.withdraw();
     let ownerBalanceAfterWithdraw = await provider.getBalance(owner.address);
@@ -118,5 +116,17 @@ describe("Voter", function () {
 
 
   });
+
+  it("Should allow finishing the vote", async function () {
+    const provider = waffle.provider;
+    await voter.startVote("q", "a1", "a2", "a3", 5, {
+      value: ethers.utils.parseEther("0.05")
+    });
+    let [is_active, vfrom, q, a1, a2, a3, ft] = await voter.getVoteInfo();
+    expect(is_active).to.equal(true);
+    await voter.finish();
+    [is_active, vfrom, q, a1, a2, a3, ft] = await voter.getVoteInfo();
+    expect(is_active).to.equal(false);
+  })
 
 });

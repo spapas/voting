@@ -27249,6 +27249,10 @@
     el.prop("disabled", true);
     el.addClass("opacity-50").addClass("cursor-not-allowed");
   }
+  function enable(el) {
+    el.prop("enabled", true);
+    el.removeClass("opacity-50").removeClass("cursor-not-allowed");
+  }
   function connect() {
     ethereum.request({ method: "eth_requestAccounts" }).then(handleAccountsChanged).catch((err) => {
       if (err.code === 4001) {
@@ -27319,7 +27323,16 @@
             value: ethers_exports.utils.parseEther("0.05")
           }).then((tx) => {
             console.log(tx);
+            console.log(tx.hash);
             alert("Transation ok! " + tx + ". Please wait for confirmation...");
+            provider.waitForTransaction(tx.hash).then((res) => {
+              console.log("ok ", res);
+              alert("Vote started!");
+              window.location = "/";
+            }).catch((err) => {
+              alert("Error: " + err);
+              enable((0, import_jquery.default)("#startVoteButton"));
+            });
           }).catch((err) => {
             console.log(err);
             alert(err.data.message);
@@ -27340,24 +27353,41 @@
           });
         }
       });
+      (0, import_jquery.default)("#finishVoteButton").on("click", () => {
+        voterContract.finish().then((tx) => {
+          console.log(tx);
+          alert("Vote finished! " + tx + ". Please wait for confirmation...");
+          provider.waitForTransaction(tx.hash).then((res) => {
+            console.log("ok ", res);
+            alert("Vote finished!");
+            window.location = "/";
+          }).catch((err) => {
+            alert("Error: " + err);
+          });
+        }).catch((err) => {
+          console.log(err);
+          alert(err.data.message);
+        });
+      });
       voterContract.getVoteInfo().then((resp) => {
         console.log(resp);
         let isActive = resp[0];
         if (isActive) {
           console.log("Vote is active");
-          let [isActive2, question, answer_a, answer_b, answer_c, finishTime] = resp;
+          let [isActive2, voteFrom, question, answer_a, answer_b, answer_c, finishTime] = resp;
           (0, import_jquery.default)("#questionDiv").text(question);
           (0, import_jquery.default)("#answerAlabel").text(answer_a);
           (0, import_jquery.default)("#answerBlabel").text(answer_b);
           (0, import_jquery.default)("#answerClabel").text(answer_c);
           (0, import_jquery.default)("#finishOnDiv").text(new Date(1e3 * finishTime));
           (0, import_jquery.default)("#doVote").removeClass("hidden");
+          console.log(voteFrom);
         } else {
           console.log("Vote is not active");
           (0, import_jquery.default)("#newVote").removeClass("hidden");
         }
       }).catch((err) => {
-        console.error(err);
+        console.log(err);
       });
     } else {
       alert("Metamask not found!");

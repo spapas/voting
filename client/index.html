@@ -22,7 +22,7 @@
     <h3>Current balance: <span class='underline' id='balance'></span></h3>
 
     <hr />
-    <div id='newVote' class='hidden'>
+    <div id='newVote' class='hidden border'>
 
       <h4 class='text-2xl'>New vote</h4>
       <div class='w-full'>
@@ -52,7 +52,7 @@
         >Start vote</button>
       </div>
     </div>
-    <div id='doVote' class='hidden'>
+    <div id='doVote' class='hidden border'>
       <h4 class='text-2xl'>Vote</h4>
       <div id='questionDiv'></div>
       
@@ -63,10 +63,12 @@
       class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
       >Vote</button>
     </input>
-    Vote ends on: <span id='finishOnDiv'></div>
+    Vote ends on: <span id='finishOnDiv'></span>
     <h4>Results</h4>
     <div id='resultsDiv'></div>
-    </div>
+    <button
+    class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+    id='finishVoteButton'>Finish vote!</button>
   </div>
 
 

@@ -113,7 +113,17 @@ $(function() {
                     value: ethers.utils.parseEther("0.05")
                 }).then(tx => {
                     console.log(tx);
+                    console.log(tx.hash);
                     alert("Transation ok! " + tx + ". Please wait for confirmation...");
+                    provider.waitForTransaction(tx.hash).then(res => {
+                        console.log("ok ", res)
+                        alert("Vote started!");
+                        window.location="/"
+                    }).catch(err => {
+                        alert("Error: " + err);
+                        enable($('#startVoteButton'));
+                    })
+
                 }).catch(err => {
                     console.log(err);
                     alert(err.data.message)
@@ -134,32 +144,53 @@ $(function() {
                     alert(err.data.message)
                 })
             }
+        })
+
+        $('#finishVoteButton').on("click", () => {
+            voterContract.finish().then(tx => {
+                console.log(tx);
+                alert("Vote finished! " + tx + ". Please wait for confirmation...");
+
+                provider.waitForTransaction(tx.hash).then(res => {
+                    console.log("ok ", res)
+                    alert("Vote finished!");
+                    window.location="/"
+                }).catch(err => {
+                    alert("Error: " + err);
+                    
+                })
+
+            }).catch(err => {
+                console.log(err);
+                alert(err.data.message)
+            })
             
         })
+
+
 
         voterContract.getVoteInfo().then(resp => {
             console.log(resp)
             let isActive = resp[0]
             if(isActive) {
                 console.log("Vote is active");
-                let [isActive, question, answer_a, answer_b, answer_c, finishTime] = resp
+                let [isActive, voteFrom, question, answer_a, answer_b, answer_c, finishTime] = resp
                 $('#questionDiv').text(question);
                 $('#answerAlabel').text(answer_a);
                 $('#answerBlabel').text(answer_b);
                 $('#answerClabel').text(answer_c);
                 $('#finishOnDiv').text(new Date(1000*finishTime));
 
-                
-
                 $('#doVote').removeClass("hidden")
+                console.log(voteFrom);
             } else {
                 console.log("Vote is not active")
                 $('#newVote').removeClass("hidden")
                 
             }
             
-        }).catch((err) => {
-            console.error(err);
+        }).catch(err => {
+            console.log(err);
         });
 
       } else {

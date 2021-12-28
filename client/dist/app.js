@@ -27266,12 +27266,17 @@
       const abi2 = Voter_default.abi;
       const signer = provider.getSigner();
       const voterContract = new ethers_exports.Contract(voterAddress, abi2, signer);
+      voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
+        console.log("StartVote EVENT", from, question, choice_a, choice_b, choice_c, finishTime, event);
+        alert("Start vote event received! with data: " + from + " " + question + " " + choice_a + " " + choice_b + " " + choice_c + " " + finishTime);
+      });
       (0, import_jquery.default)("#startVoteButton").on("click", () => {
         const q = (0, import_jquery.default)("#question").val();
         const a = (0, import_jquery.default)("#answer_a").val();
         const b = (0, import_jquery.default)("#answer_b").val();
         const c = (0, import_jquery.default)("#answer_c").val();
         const d = (0, import_jquery.default)("#duration").val();
+        disable((0, import_jquery.default)("#startVoteButton"));
         if (!q || !a || !b || !c || !d) {
           alert("Please fill all params");
         } else {
@@ -27279,6 +27284,7 @@
             value: ethers_exports.utils.parseEther("0.05")
           }).then((tx) => {
             console.log(tx);
+            alert("Transation ok! " + tx + ". Please wait for confirmation...");
           }).catch((err) => {
             console.log(err);
             alert(err.data.message);
@@ -27290,6 +27296,11 @@
         let isActive = resp[0];
         if (isActive) {
           console.log("Vote is active");
+          let [isActive2, question, answer_a, answer_b, answer_c, finishTime] = resp;
+          (0, import_jquery.default)("#questionDiv").text(question);
+          (0, import_jquery.default)("#answerAlabel").text(answer_a);
+          (0, import_jquery.default)("#answerBlabel").text(answer_b);
+          (0, import_jquery.default)("#answerClabel").text(answer_c);
           (0, import_jquery.default)("#doVote").removeClass("hidden");
         } else {
           console.log("Vote is not active");

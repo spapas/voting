@@ -11,6 +11,11 @@ function disable(el) {
     el.addClass("opacity-50").addClass("cursor-not-allowed");
 }
 
+function enable(el) {
+    el.prop("enabled", true);
+    el.removeClass("opacity-50").removeClass("cursor-not-allowed");
+}
+
 function connect() {
     ethereum
       .request({ method: 'eth_requestAccounts' })
@@ -77,12 +82,19 @@ $(function() {
         //const voterContract = new ethers.Contract(voterAddress, abi, provider);
         const voterContract = new ethers.Contract(voterAddress, abi, signer);
 
+        voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
+            console.log("StartVote EVENT", from, question, choice_a, choice_b, choice_c, finishTime, event);
+            alert("Start vote event received! with data: " + from + " " + question + " " + choice_a + " " + choice_b + " " + choice_c + " " + finishTime);
+            //window.location = "/"
+        });
+
         $('#startVoteButton').on("click", () => {
             const q = $('#question').val()
             const a = $('#answer_a').val()
             const b = $('#answer_b').val()
             const c = $('#answer_c').val()
             const d = $('#duration').val()
+            disable($('#startVoteButton'));
             if(!q || !a || !b || !c || !d) {
                 alert("Please fill all params");
             } else {
@@ -90,6 +102,7 @@ $(function() {
                     value: ethers.utils.parseEther("0.05")
                 }).then(tx => {
                     console.log(tx);
+                    alert("Transation ok! " + tx + ". Please wait for confirmation...");
                 }).catch(err => {
                     console.log(err);
                     alert(err.data.message)
@@ -98,12 +111,17 @@ $(function() {
             
         });
 
-        
         voterContract.getVoteInfo().then(resp => {
             console.log(resp)
             let isActive = resp[0]
             if(isActive) {
-                console.log("Vote is active")
+                console.log("Vote is active");
+                let [isActive, question, answer_a, answer_b, answer_c, finishTime] = resp
+                $('#questionDiv').text(question);
+                $('#answerAlabel').text(answer_a);
+                $('#answerBlabel').text(answer_b);
+                $('#answerClabel').text(answer_c);
+
                 $('#doVote').removeClass("hidden")
             } else {
                 console.log("Vote is not active")

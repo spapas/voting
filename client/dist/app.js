@@ -27245,12 +27245,19 @@
   var voterAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   var provider = void 0;
   var currentAccount = null;
+  function showLoader(text) {
+    (0, import_jquery.default)("#loader p").text(text);
+    (0, import_jquery.default)("#loader").removeClass("hidden");
+  }
+  function hideLoader(text) {
+    (0, import_jquery.default)("#loader").addClass("hidden");
+  }
   function disable(el) {
     el.prop("disabled", true);
     el.addClass("opacity-50").addClass("cursor-not-allowed");
   }
   function enable(el) {
-    el.prop("enabled", true);
+    el.prop("disabled", false);
     el.removeClass("opacity-50").removeClass("cursor-not-allowed");
   }
   function connect() {
@@ -27298,7 +27305,6 @@
       voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
         console.log("StartVote EVENT", from, question, choice_a, choice_b, choice_c, finishTime, event);
         console.log(event);
-        alert("Start vote event received! with data: " + from + " " + question + " " + choice_a + " " + choice_b + " " + choice_c + " " + finishTime);
       });
       voterContract.on("Vote", (from, choice, total, event) => {
         console.log("Vote event received! with data: " + from + " " + choice + " " + total + " " + event);
@@ -27328,18 +27334,18 @@
           }).then((tx) => {
             console.log(tx);
             console.log(tx.hash);
-            alert("Transation ok! " + tx + ". Please wait for confirmation...");
+            showLoader("Transaction tx: " + tx + ". Waiting for transaction to be mined...");
             provider.waitForTransaction(tx.hash).then((res) => {
               console.log("ok ", res);
-              alert("Vote started!");
               window.location = "/";
             }).catch((err) => {
-              alert("Error: " + err);
+              alert("Error: " + err.message);
               enable((0, import_jquery.default)("#startVoteButton"));
             });
           }).catch((err) => {
             console.log(err);
-            alert(err.data.message);
+            alert("Error: " + err.message);
+            enable((0, import_jquery.default)("#startVoteButton"));
           });
         }
       });
@@ -27348,29 +27354,35 @@
         if (!v) {
           alert("Please select a choice!");
         } else {
+          disable((0, import_jquery.default)("#voteButton"));
           voterContract.vote(v).then((tx) => {
-            console.log(tx);
-            alert("Vote ok! " + tx + ". Please wait for confirmation...");
+            showLoader("Transaction tx: " + tx + ". Waiting for transaction to be mined...");
+            provider.waitForTransaction(tx.hash).then((res) => {
+              console.log("ok ", res);
+              enable((0, import_jquery.default)("#voteButton"));
+              hideLoader();
+            }).catch((err) => {
+              alert("Error: " + err.message);
+              hideLoader();
+            });
           }).catch((err) => {
-            console.log(err);
-            alert(err.data.message);
+            enable((0, import_jquery.default)("#voteButton"));
+            alert(err.message);
           });
         }
       });
       (0, import_jquery.default)("#finishVoteButton").on("click", () => {
         voterContract.finish().then((tx) => {
-          console.log(tx);
-          alert("Vote finished! " + tx + ". Please wait for confirmation...");
+          showLoader("Vote finished! " + tx + ". Please wait for confirmation...");
           provider.waitForTransaction(tx.hash).then((res) => {
-            console.log("ok ", res);
-            alert("Vote finished!");
             window.location = "/";
           }).catch((err) => {
             alert("Error: " + err);
+            hideLoader();
           });
         }).catch((err) => {
           console.log(err);
-          alert(err.data.message);
+          hideLoader();
         });
       });
       voterContract.getVoteInfo().then((resp) => {

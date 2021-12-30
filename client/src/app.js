@@ -27,6 +27,7 @@ function enable(el) {
 }
 
 function connect() {
+    
     ethereum
       .request({ method: 'eth_requestAccounts' })
       .then(handleAccountsChanged)
@@ -213,6 +214,11 @@ $(function() {
                 $('#finishOnDiv').text(new Date(1000*finishTime));
 
                 $('#doVote').removeClass("hidden")
+                
+                voterContract.getResult().then(resp => {
+                    let [a, b, c] = resp;
+                    $('#resultsDiv').text(a.toString() + " / " + b.toString() + " / " + c.toString());
+                });
                 console.log(voteFrom);
             } else {
                 voterContract.getResult().then(resp => {

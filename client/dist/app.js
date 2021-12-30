@@ -27401,6 +27401,10 @@
           (0, import_jquery.default)("#answerClabel").text(answer_c);
           (0, import_jquery.default)("#finishOnDiv").text(new Date(1e3 * finishTime));
           (0, import_jquery.default)("#doVote").removeClass("hidden");
+          voterContract.getResult().then((resp2) => {
+            let [a, b, c] = resp2;
+            (0, import_jquery.default)("#resultsDiv").text(a.toString() + " / " + b.toString() + " / " + c.toString());
+          });
           console.log(voteFrom);
         } else {
           voterContract.getResult().then((resp2) => {

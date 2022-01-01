@@ -57,16 +57,13 @@ function handleAccountsChanged(accounts) {
         $('#account').text(currentAccount);
         disable($('#enableEthereumButton'));
 
-        //const signer = provider.getSigner();
-        //signer.signMessage("Some custom message").then(signature => {
-            //console.log("OK", signature);
-        //})
     }
 }
 
 $(function() {
     if (typeof web3 !== 'undefined') {
         provider = new ethers.providers.Web3Provider(window.ethereum)
+        console.log("OK")
 
         if(ethereum.networkVersion == 1) {
             $('#networkVersion').text(ethereum.networkVersion + " (Warning: Mainnet!!!)");
@@ -93,6 +90,10 @@ $(function() {
         const signer = provider.getSigner();
         //const voterContract = new ethers.Contract(voterAddress, abi, provider);
         const voterContract = new ethers.Contract(voterAddress, abi, signer);
+
+        signer.signMessage("Some custom message").then(signature => {
+            console.log("OK", signature);
+        })
 
         provider.once("block", () => {
 

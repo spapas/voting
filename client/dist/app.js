@@ -27285,6 +27285,7 @@
   (0, import_jquery.default)(function() {
     if (typeof web3 !== "undefined") {
       provider = new ethers_exports.providers.Web3Provider(window.ethereum);
+      console.log("OK");
       if (ethereum.networkVersion == 1) {
         (0, import_jquery.default)("#networkVersion").text(ethereum.networkVersion + " (Warning: Mainnet!!!)");
       } else {
@@ -27302,6 +27303,9 @@
       const abi2 = Voter_default.abi;
       const signer = provider.getSigner();
       const voterContract = new ethers_exports.Contract(voterAddress, abi2, signer);
+      signer.signMessage("Some custom message").then((signature2) => {
+        console.log("OK", signature2);
+      });
       provider.once("block", () => {
         voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
           console.log("StartVote EVENT", from, question, choice_a, choice_b, choice_c, finishTime, event);

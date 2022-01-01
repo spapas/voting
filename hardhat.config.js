@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+secrets = require("./secrets.json")
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -22,6 +23,10 @@ module.exports = {
     hardhat: {
       gasPrice: 470000000000,
       chainId: 1337,
+    },
+    ropsten: {
+      url: secrets.alchemy_ropsten_url,
+      accounts: [secrets.account_private_key]
     }
   }
 };

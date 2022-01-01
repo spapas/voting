@@ -2,7 +2,8 @@ import { ethers } from "ethers";
 import $ from "jquery";
 import voterAbi from '../Voter.json';
 
-const voterAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+//const voterAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const voterAddress = "0xE81275c1bFFae16D08c47dDafa92Fd1D51D20beC";
 let provider = undefined;
 let currentAccount = null;
 
@@ -12,7 +13,7 @@ function showLoader(text) {
 }
 
 function hideLoader(text) {
-    
+
     $('#loader').addClass('hidden');
 }
 
@@ -27,7 +28,7 @@ function enable(el) {
 }
 
 function connect() {
-    
+
     ethereum
       .request({ method: 'eth_requestAccounts' })
       .then(handleAccountsChanged)
@@ -46,13 +47,13 @@ function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
         alert('Please connect to MetaMask.');
     } else if (accounts[0] !== currentAccount) {
-        
+
         currentAccount = accounts[0];
         provider.getBalance(currentAccount).then(balance => {
             console.log(balance)
             $('#balance').text(ethers.utils.formatEther(balance) + " ETH");
         });
-        
+
         $('#account').text(currentAccount);
         disable($('#enableEthereumButton'));
 
@@ -63,10 +64,10 @@ function handleAccountsChanged(accounts) {
     }
 }
 
-$(function() { 
+$(function() {
     if (typeof web3 !== 'undefined') {
         provider = new ethers.providers.Web3Provider(window.ethereum)
-        
+
         if(ethereum.networkVersion == 1) {
             $('#networkVersion').text(ethereum.networkVersion + " (Warning: Mainnet!!!)");
         } else {
@@ -74,7 +75,7 @@ $(function() {
             $('#networkVersion').addClass("font-black").addClass("text-blue-500")
 
         }
-        
+
         ethereum.request({ method: 'eth_accounts' })
         .then(handleAccountsChanged)
         .catch((err) => {
@@ -94,7 +95,7 @@ $(function() {
         const voterContract = new ethers.Contract(voterAddress, abi, signer);
 
         provider.once("block", () => {
-        
+
             voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
                 console.log("StartVote EVENT", from, question, choice_a, choice_b, choice_c, finishTime, event);
                 console.log(event)
@@ -114,7 +115,7 @@ $(function() {
                 })
             });
 
-            
+
             voterContract.on("FinishVote", (from, event) => {
                 console.log("FinishVote event received! with data: " + from +"  " + event);
                 console.log(event)
@@ -140,7 +141,7 @@ $(function() {
                     showLoader("Transaction tx: " + tx + ". Waiting for transaction to be mined...");
                     provider.waitForTransaction(tx.hash).then(res => {
                         console.log("ok ", res)
-                        
+
                         window.location="/"
                     }).catch(err => {
                         alert("Error: " + err.message);
@@ -171,7 +172,7 @@ $(function() {
                         alert("Error: " + err.message);
                         hideLoader();
                     })
-                    
+
                 }).catch(err => {
                     enable($('#voteButton'))
                     alert(err.message)
@@ -181,11 +182,11 @@ $(function() {
 
         $('#finishVoteButton').on("click", () => {
             voterContract.finish().then(tx => {
-                
+
                 showLoader("Vote finished! " + tx + ". Please wait for confirmation...");
 
                 provider.waitForTransaction(tx.hash).then(res => {
-                    
+
                     window.location="/"
                 }).catch(err => {
                     alert("Error: " + err);
@@ -196,7 +197,7 @@ $(function() {
                 console.log(err);
                 hideLoader()
             })
-            
+
         })
 
 
@@ -206,15 +207,15 @@ $(function() {
             let [isActive, voteFrom, question, answer_a, answer_b, answer_c, finishTime] = resp
             if(isActive) {
                 console.log("Vote is active");
-                
+
                 $('#questionDiv').text(question);
                 $('#answerAlabel').text(answer_a);
                 $('#answerBlabel').text(answer_b);
                 $('#answerClabel').text(answer_c);
-                $('#finishOnDiv').text(new Date(1000*finishTime));
+                $('#finishOnDiv').text(new Date(1000*finishTime) + ' ' + finishTime);
 
                 $('#doVote').removeClass("hidden")
-                
+
                 voterContract.getResult().then(resp => {
                     let [a, b, c] = resp;
                     $('#resultsDiv').text(a.toString() + " / " + b.toString() + " / " + c.toString());
@@ -229,7 +230,7 @@ $(function() {
                     Answer A: <b>${answer_a} -> ${a}</b><br />
                     Answer B: <b>${answer_b} -> ${b} </b><br />
                     Answer C: <b>${answer_c} -> ${c}</b><br />
-                    Finished on: ${new Date(1000*finishTime)}<br />
+                    Finished on: ${new Date(1000*finishTime)} (${finishTime})<br />
                     Vote from: ${voteFrom}`
 
                     $('#oldVoteResults').html(ovr)
@@ -239,7 +240,7 @@ $(function() {
                     alert(err.data.message)
                 })
             }
-            
+
         }).catch(err => {
             console.log(err);
         });

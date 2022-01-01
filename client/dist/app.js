@@ -8980,7 +8980,7 @@
               handler.guid = jQuery.guid++;
             }
             if (!(events = elemData.events)) {
-              events = elemData.events = Object.create(null);
+              events = elemData.events = /* @__PURE__ */ Object.create(null);
             }
             if (!(eventHandle = elemData.handle)) {
               eventHandle = elemData.handle = function(e) {
@@ -9078,7 +9078,7 @@
             }
           },
           dispatch: function(nativeEvent) {
-            var i, j, ret, matched, handleObj, handlerQueue, args = new Array(arguments.length), event = jQuery.event.fix(nativeEvent), handlers = (dataPriv.get(this, "events") || Object.create(null))[event.type] || [], special = jQuery.event.special[event.type] || {};
+            var i, j, ret, matched, handleObj, handlerQueue, args = new Array(arguments.length), event = jQuery.event.fix(nativeEvent), handlers = (dataPriv.get(this, "events") || /* @__PURE__ */ Object.create(null))[event.type] || [], special = jQuery.event.special[event.type] || {};
             args[0] = event;
             for (i = 1; i < arguments.length; i++) {
               args[i] = arguments[i];
@@ -11038,7 +11038,7 @@
             while ((cur = eventPath[i++]) && !event.isPropagationStopped()) {
               lastElement = cur;
               event.type = i > 1 ? bubbleType : special.bindType || type;
-              handle = (dataPriv.get(cur, "events") || Object.create(null))[event.type] && dataPriv.get(cur, "handle");
+              handle = (dataPriv.get(cur, "events") || /* @__PURE__ */ Object.create(null))[event.type] && dataPriv.get(cur, "handle");
               if (handle) {
                 handle.apply(cur, data);
               }
@@ -27242,7 +27242,7 @@
   };
 
   // client/src/app.js
-  var voterAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  var voterAddress = "0xE81275c1bFFae16D08c47dDafa92Fd1D51D20beC";
   var provider = void 0;
   var currentAccount = null;
   function showLoader(text) {
@@ -27399,7 +27399,7 @@
           (0, import_jquery.default)("#answerAlabel").text(answer_a);
           (0, import_jquery.default)("#answerBlabel").text(answer_b);
           (0, import_jquery.default)("#answerClabel").text(answer_c);
-          (0, import_jquery.default)("#finishOnDiv").text(new Date(1e3 * finishTime));
+          (0, import_jquery.default)("#finishOnDiv").text(new Date(1e3 * finishTime) + " " + finishTime);
           (0, import_jquery.default)("#doVote").removeClass("hidden");
           voterContract.getResult().then((resp2) => {
             let [a, b, c] = resp2;
@@ -27415,7 +27415,7 @@
                     Answer A: <b>${answer_a} -> ${a}</b><br />
                     Answer B: <b>${answer_b} -> ${b} </b><br />
                     Answer C: <b>${answer_c} -> ${c}</b><br />
-                    Finished on: ${new Date(1e3 * finishTime)}<br />
+                    Finished on: ${new Date(1e3 * finishTime)} (${finishTime})<br />
                     Vote from: ${voteFrom}`;
             (0, import_jquery.default)("#oldVoteResults").html(ovr);
             console.log(ovr);

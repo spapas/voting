@@ -91,10 +91,34 @@ $(function() {
         //const voterContract = new ethers.Contract(voterAddress, abi, provider);
         const voterContract = new ethers.Contract(voterAddress, abi, signer);
 
-        signer.signMessage("Some custom message").then(signature => {
-            console.log("OK", signature);
+      /* // Playing with signatures
+        signer.getAddress().then(ethAddress => {
+          console.log("1", ethAddress)
+          let hash = ethers.utils.keccak256(ethAddress)
+          let msg = "ko ko ko"
+          //let hash = "Ko ko ko"
+            console.log("2", hash)
+            //signer.signMessage(ethers.utils.arrayify(hash)).then( sig => {
+            signer.signMessage(msg).then( sig => {
+              console.log("3", sig)
+
+              //let pubKey = ethers.utils.recoverPublicKey(ethers.utils.arrayify(ethers.utils.hashMessage(ethers.utils.arrayify(hash))), sig);
+//let address = ethers.utils.computeAddress(pubKey)
+              //console.log("4", pubKey);
+              //console.log("5", address);
+
+              //const recoveredAddress = ethers.utils.verifyMessage(ethers.utils.arrayify(hash), sig)
+              const recoveredAddress = ethers.utils.verifyMessage(msg, sig)
+              console.log("6", recoveredAddress)
+            });
+
         })
 
+        signer.signMessage("Some custom message").then(signature => {
+            console.log("OK", signature);
+
+        })
+      */
         provider.once("block", () => {
 
             voterContract.on("StartVote", (from, question, choice_a, choice_b, choice_c, finishTime, event) => {
